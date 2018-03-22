@@ -1,6 +1,5 @@
 $(document).ready(init)
 
-
 var service;
 var geocoder;
 
@@ -37,7 +36,7 @@ function getGoogleMapsInfo(position) {
 
     var pyrmont = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
-    map = new google.maps.Map(document.getElementById('map'), {
+    map = new google.maps.Map(document.getElementById('map'), { //Do I really need this?
         center: pyrmont,
         zoom: 15
     });
@@ -50,25 +49,42 @@ function getGoogleMapsInfo(position) {
     };
 
     service = new google.maps.places.PlacesService(map);
-    service.nearbySearch(request, callback);
+    service.nearbySearch(request, restaurantCallback);
 }
 
-function callback(results, status) {
+function getDetailedInfoFromId(id){
+    var request = {
+        placeId: id
+    };
+    service = new google.maps.places.PlacesService(map);
+    service.getDetails(request, setRedirectUrl);
+}
+
+function restaurantCallback(results, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {
         console.log(results)
         $("#restaurant-ul").empty();
         for (let i = 0; i < 5; i++) {
             var name = results[i].name;
-            var openStatus;
-            if (results[i].hasOwnProperty("opening_hours")){
-                openStatus = (results[i].opening_hours.open_now) ? "OPEN" : "CLOSED";
-            }
-            else{
-                openStatus = "NO INFO";
-            }
-
-           
-            $("#restaurant-ul").append('<li>' + name.toUpperCase() + ' : ' + openStatus +  '</li>')
+            var openStatus;    
+            getDetailedInfoFromId(results[i].place_id)
          }
+    }
+}
+
+function setRedirectUrl(result, status){
+    if (result.hasOwnProperty("opening_hours")){
+        openStatus = (result.opening_hours.open_now) ? "OPEN" : "CLOSED";
+    }
+    else{
+        openStatus = "NO INFO";
+    } 
+    var name = result.name;
+    if (status == google.maps.places.PlacesServiceStatus.OK) {   
+        console.log(result)    
+        $("#restaurant-ul").append('<li class="' + result.place_id + '">' + name.toUpperCase() + ' : ' + openStatus +  '</li>');
+        $("." + result.place_id).click(function(){
+            window.open(result.website)
+        })
     }
 }

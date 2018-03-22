@@ -1,0 +1,57 @@
+body{
+  background-image: url("https://c1.staticflickr.com/3/2465/3947478336_4e4d08d885_o.jpg");
+  background-repeat:no-repeat;
+  background-size:cover;
+}
+
+.search-container button {
+    padding: 6px 10px;
+    margin-top: 8px;
+    margin-right: 16px;
+    background: #ddd;
+    font-size: 17px;
+    border: none;
+    cursor: pointer;
+  }
+
+  input[type=text] {
+    padding: 6px;
+    margin-top: 8px;
+    font-size: 17px;
+    border: none;
+  }
+
+  .search-container button:hover {
+    background: #ccc;
+  }
+
+  .search-container {
+    margin: auto;
+    text-align: center;
+    width:50%;
+    padding-top: 15em;
+    padding-bottom: 5em;
+  }
+
+
+
+
+  #result-list{
+    font-family: 'Allerta Stencil', sans-serif;
+    display: inline-flex;
+    background-color: rgba(0, 0, 0, 0.7);
+    width: 33%;
+    color: white;
+    font-size: 1.5em;
+    text-align: center;
+  }
+
+  #result-list ul{
+
+    list-style-type: none;
+  }
+
+  #result-list li{
+
+    margin: 1em 0;
+  }

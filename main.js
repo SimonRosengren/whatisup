@@ -5,7 +5,14 @@ var geocoder;
 
 function init() {
     geocoder = new google.maps.Geocoder();
+    setLoadingIcons();
     getLocation();
+}
+
+function setLoadingIcons() {
+    $("#restaurant-div").append('<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>');
+    $("#pos-div").append('<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>');
+    $("#event-div").append('<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>');
 }
 
 $("#search-form").submit(function (event) {
@@ -18,7 +25,7 @@ function getLatLngFromText(text) {
         console.log(status)
         if (status == 'OK') {
             console.log(results[0].geometry.location.lat());
-            getGoogleMapsInfo({coords: {latitude: results[0].geometry.location.lat(), longitude: results[0].geometry.location.lng()}})
+            getGoogleMapsInfo({ coords: { latitude: results[0].geometry.location.lat(), longitude: results[0].geometry.location.lng() } })
         }
     })
 }
@@ -43,7 +50,7 @@ function getGoogleMapsInfo(position) {
 
     var request = {
         location: pyrmont,
-        radius: '500', 
+        radius: '500',
         type: ['restaurant'],
         rankby: 'distance'
     };
@@ -52,7 +59,7 @@ function getGoogleMapsInfo(position) {
     service.nearbySearch(request, restaurantCallback);
 }
 
-function getDetailedInfoFromId(id){
+function getDetailedInfoFromId(id) {
     var request = {
         placeId: id
     };
@@ -63,27 +70,28 @@ function getDetailedInfoFromId(id){
 function restaurantCallback(results, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {
         console.log(results)
-        $("#restaurant-ul").empty();
+        $("#restaurant-div").empty();
+        $("#restaurant-div").append('<ul id="restaurant-ul"></ul>')
         for (let i = 0; i < 5; i++) {
             var name = results[i].name;
-            var openStatus;    
+            var openStatus;
             getDetailedInfoFromId(results[i].place_id)
-         }
+        }
     }
 }
 
-function setRedirectUrl(result, status){
-    if (result.hasOwnProperty("opening_hours")){
+function setRedirectUrl(result, status) {
+    if (result.hasOwnProperty("opening_hours")) {
         openStatus = (result.opening_hours.open_now) ? "OPEN" : "CLOSED";
     }
-    else{
+    else {
         openStatus = "NO INFO";
-    } 
+    }
     var name = result.name;
-    if (status == google.maps.places.PlacesServiceStatus.OK) {   
-        console.log(result)    
-        $("#restaurant-ul").append('<li class="' + result.place_id + '">' + name.toUpperCase() + ' : ' + openStatus +  '</li>');
-        $("." + result.place_id).click(function(){
+    if (status == google.maps.places.PlacesServiceStatus.OK) {
+        console.log(result)
+        $("#restaurant-ul").append('<li class="' + result.place_id + '">' + name.toUpperCase() + ' : ' + openStatus + '</li>');
+        $("." + result.place_id).click(function () {
             window.open(result.website)
         })
     }

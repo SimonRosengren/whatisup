@@ -96,3 +96,56 @@ function setRedirectUrl(result, status) {
         })
     }
 }
+//FLICKR
+console.log("Test")
+//https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}.jpg
+var bgPic = [];
+$.ajax({
+            url: " https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=dc55321147eb831fb3d20caeb2367882&tags=malmö&in_gallery&format=json&nojsoncallback=1",
+            type: "GET",
+            success: function (result) {
+                console.log(result)
+                for (var i = 0; i < 10; i++) {
+                    bgPic.push("https://farm"+ result.photos.photo[i].farm + ".staticflickr.com/"+ result.photos.photo[i].server +"/" + result.photos.photo[i].id + "_"+ result.photos.photo[i].secret + "_h.jpg")                    
+                }
+                console.log(bgPic)         
+                startLoop(bgPic);
+            }
+        })
+
+var counter = 0;
+var iFrequency = 8000; 
+var myInterval = 0;
+
+function startLoop(bg) {
+    console.log("inside startloop")
+    var src1 = document.getElementById("bg1");
+    var src2 = document.getElementById("bg2");
+    src1.style.backgroundImage = "url(" + bgPic[counter] + ")"
+    counter++;
+    src2.style.backgroundImage = "url(" + bgPic[counter] + ")"
+    myInterval = setInterval( LoopPictures, iFrequency, bg, src1, src2);  // run
+}
+var bg2Out= true;
+function LoopPictures(bg, src1, src2)
+{
+
+    console.log("inside doSomething")
+    counter ++;
+    if(counter >= 10)
+        counter = 0;
+    if(bg2Out == true){
+        $("#bg2").fadeOut(3000, function(){
+            src2.style.backgroundImage = "url(" + bgPic[counter] + ")"
+        });
+        $("#bg1").fadeIn(3000);
+        bg2Out = false;
+    }
+    else{
+        $("#bg2").fadeIn(3000);
+        $("#bg1").fadeOut(3000, function(){
+            src1.style.backgroundImage = "url(" + bgPic[counter] + ")"
+        });
+        bg2Out = true;
+    }
+}

@@ -1,8 +1,14 @@
-body{
-  background-image: url("https://c1.staticflickr.com/3/2465/3947478336_4e4d08d885_o.jpg");
-  background-repeat:no-repeat;
-  background-size:cover;
+.bg{
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  z-index: -1;
 }
+
 
 .search-container button {
     padding: 6px 10px;

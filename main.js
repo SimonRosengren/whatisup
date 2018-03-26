@@ -2,7 +2,7 @@ $(document).ready(init)
 
 var service;
 var geocoder;
-
+var myInterval = 0;
 function init() {
     geocoder = new google.maps.Geocoder();
     setLoadingIcons();
@@ -16,15 +16,19 @@ function setLoadingIcons() {
 }
 
 $("#search-form").submit(function (event) {
-    getLatLngFromText($(this).serialize());
+
+    var search = $(this).serialize();
+    search = search.split('=');
+    search = search[1];
+    console.log(search)
+    getLatLngFromText(search);
+    getBgPictures(search);
     event.preventDefault();
 })
 
 function getLatLngFromText(text) {
     geocoder.geocode({ 'address': text }, function (results, status) {
-        console.log(status)
         if (status == 'OK') {
-            console.log(results[0].geometry.location.lat());
             getGoogleMapsInfo({ coords: { latitude: results[0].geometry.location.lat(), longitude: results[0].geometry.location.lng() } })
         }
     })
@@ -40,6 +44,24 @@ function getLocation() {
 function getGoogleMapsInfo(position) {
     console.log("Latitude: " + position.coords.latitude +
         "<br>Longitude: " + position.coords.longitude);
+
+
+
+    var latlng = {
+        lat: position.coords.latitude, 
+        lng: position.coords.longitude
+    };
+
+        geocoder.geocode({ 'location': latlng }, function (results, status) {
+            if (status == 'OK') {
+                /*var place = results[3].formatted_address;
+                var city = place.split(',');
+                getBgPictures(city[0]);*/
+                
+            }
+        })
+
+
 
     var pyrmont = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 
@@ -69,7 +91,6 @@ function getDetailedInfoFromId(id) {
 
 function restaurantCallback(results, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {
-        console.log(results)
         $("#restaurant-div").empty();
         $("#restaurant-div").append('<ul id="restaurant-ul"></ul>')
         for (let i = 0; i < 5; i++) {
@@ -97,53 +118,56 @@ function setRedirectUrl(result, status) {
     }
 }
 //FLICKR
-console.log("Test")
 //https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}.jpg
 var bgPic = [];
-$.ajax({
-            url: " https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=dc55321147eb831fb3d20caeb2367882&tags=malmö&in_gallery&format=json&nojsoncallback=1",
-            type: "GET",
-            success: function (result) {
-                console.log(result)
-                for (var i = 0; i < 10; i++) {
-                    bgPic.push("https://farm"+ result.photos.photo[i].farm + ".staticflickr.com/"+ result.photos.photo[i].server +"/" + result.photos.photo[i].id + "_"+ result.photos.photo[i].secret + "_h.jpg")                    
-                }
-                console.log(bgPic)         
-                startLoop(bgPic);
+
+function getBgPictures(city) {
+
+    console.log(city)
+    bgPic = [];
+    $.ajax({
+        url: " https://api.flickr.com/services/rest/?method=flickr.photos.search&privacy_filter=1&api_key=dc55321147eb831fb3d20caeb2367882&text=" + city + "&sort=relevance&format=json&nojsoncallback=1",
+        type: "GET",
+        success: function (result) { 
+
+            for (var i = 0; i < 10; i++) {
+                bgPic.push("https://farm" + result.photos.photo[i].farm + ".staticflickr.com/" + result.photos.photo[i].server + "/" + result.photos.photo[i].id + "_" + result.photos.photo[i].secret + ".jpg")
             }
-        })
+            startLoop();
+        }
+    })
+}
 
 var counter = 0;
-var iFrequency = 8000; 
-var myInterval = 0;
+var iFrequency = 8000;
+var src1 = document.getElementById("bg1");
+var src2 = document.getElementById("bg2");
 
-function startLoop(bg) {
-    console.log("inside startloop")
-    var src1 = document.getElementById("bg1");
-    var src2 = document.getElementById("bg2");
+function startLoop() {
+    clearInterval(myInterval);
+    console.log("removed myInterval");
     src1.style.backgroundImage = "url(" + bgPic[counter] + ")"
     counter++;
     src2.style.backgroundImage = "url(" + bgPic[counter] + ")"
-    myInterval = setInterval( LoopPictures, iFrequency, bg, src1, src2);  // run
+    myInterval = setInterval(LoopPictures, iFrequency);  // run
+    console.log("A interval has been created!")
 }
-var bg2Out= true;
-function LoopPictures(bg, src1, src2)
-{
 
-    console.log("inside doSomething")
-    counter ++;
-    if(counter >= 10)
+var bg2Out = true;
+function LoopPictures() {
+    counter++;
+    if (counter >= 10)
         counter = 0;
-    if(bg2Out == true){
-        $("#bg2").fadeOut(3000, function(){
+    if (bg2Out == true) {
+        $("#bg2").fadeOut(3000, function () {
             src2.style.backgroundImage = "url(" + bgPic[counter] + ")"
         });
         $("#bg1").fadeIn(3000);
         bg2Out = false;
     }
-    else{
+    else {
         $("#bg2").fadeIn(3000);
-        $("#bg1").fadeOut(3000, function(){
+        $("#bg1").fadeOut(3000, function () {
             src1.style.backgroundImage = "url(" + bgPic[counter] + ")"
         });
         bg2Out = true;

@@ -3,6 +3,9 @@ $(document).ready(init)
 var service;
 var geocoder;
 var myInterval = 0;
+
+const songkickApiKey = "ehoRcRboyl0i3Ovg";
+
 function init() {
     geocoder = new google.maps.Geocoder();
     setLoadingIcons();
@@ -23,6 +26,7 @@ $("#search-form").submit(function (event) {
     console.log(search)
     getLatLngFromText(search);
     getBgPictures(search);
+    getInfoFromSongkick(search);
     event.preventDefault();
 })
 
@@ -48,18 +52,18 @@ function getGoogleMapsInfo(position) {
 
 
     var latlng = {
-        lat: position.coords.latitude, 
+        lat: position.coords.latitude,
         lng: position.coords.longitude
     };
 
-        geocoder.geocode({ 'location': latlng }, function (results, status) {
-            if (status == 'OK') {
-                /*var place = results[3].formatted_address;
-                var city = place.split(',');
-                getBgPictures(city[0]);*/
-                
-            }
-        })
+    geocoder.geocode({ 'location': latlng }, function (results, status) {
+        if (status == 'OK') {
+            /*var place = results[3].formatted_address;
+            var city = place.split(',');
+            getBgPictures(city[0]);*/
+
+        }
+    })
 
 
 
@@ -93,7 +97,7 @@ function restaurantCallback(results, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {
         $("#restaurant-div").empty();
         $("#restaurant-div").append('<ul id="restaurant-ul"></ul>')
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 15; i++) {
             var name = results[i].name;
             var openStatus;
             getDetailedInfoFromId(results[i].place_id)
@@ -128,7 +132,7 @@ function getBgPictures(city) {
     $.ajax({
         url: " https://api.flickr.com/services/rest/?method=flickr.photos.search&privacy_filter=1&api_key=dc55321147eb831fb3d20caeb2367882&text=" + city + "&sort=relevance&format=json&nojsoncallback=1",
         type: "GET",
-        success: function (result) { 
+        success: function (result) {
 
             for (var i = 0; i < 10; i++) {
                 bgPic.push("https://farm" + result.photos.photo[i].farm + ".staticflickr.com/" + result.photos.photo[i].server + "/" + result.photos.photo[i].id + "_" + result.photos.photo[i].secret + ".jpg")
@@ -171,5 +175,43 @@ function LoopPictures() {
             src1.style.backgroundImage = "url(" + bgPic[counter] + ")"
         });
         bg2Out = true;
+    }
+}
+
+function getInfoFromSongkick(place) {
+    var url = "http://api.songkick.com/api/3.0/search/locations.json?query=" + place + "&apikey=" + songkickApiKey;
+    $.get(url, function (data, status) {
+        console.log(status)
+        if (status == 'success') {
+            sendRequestToSongkickWithId(data.resultsPage.results.location[0].metroArea.id);
+        }
+        else {
+            console.log("This city is probably too small!");
+        }
+    })
+}
+
+function sendRequestToSongkickWithId(id) {
+    var url = "http://api.songkick.com/api/3.0/metro_areas/" + id + "/calendar.json?apikey=" + songkickApiKey;
+    $.get(url, function (data, status) {
+        console.log(status)
+        if (status == 'success') {
+            console.log(data)
+            fillEventList(data);
+        }
+        else {
+            console.log("This city is probably too small!");
+        }
+    })
+}
+
+function fillEventList(data) {
+    $("#event-div").empty();
+    $("#event-div").append('<ul id="event-ul"></ul>')
+    for (let i = 0; i < 15; i++) {
+        $("#event-ul").append('<li id="' + data.resultsPage.results.event[i].id + '">' + data.resultsPage.results.event[i].displayName + '</li>')
+        $("#" + data.resultsPage.results.event[i].id).click(function(){
+            window.open(data.resultsPage.results.event[i].uri)
+        })
     }
 }

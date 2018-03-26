@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8">
     <title>Find where to go!</title>
-    <link rel="stylesheet" type="text/css" href="main.css">  
-    <link href="https://fonts.googleapis.com/css?family=Allerta+Stencil" rel="stylesheet"> 
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <link href="https://fonts.googleapis.com/css?family=Allerta+Stencil" rel="stylesheet">
 </head>
 
 <body>
@@ -16,21 +16,23 @@
 
     <div class="search-container">
         <form id="search-form">
-          <input type="text" placeholder="Search.." name="search">
-          <button type="submit">SEARCH</button>
+            <input type="text" placeholder="Search.." name="search">
+            <button type="submit">SEARCH</button>
         </form>
-      </div>
+    </div>
 
-      
-      <div id="restaurant-div" class="result-list">
-      </div>
-      <div id="pos-div" class="result-list">
-      </div>
-      <div id="event-div" class="result-list">
-      </div>
-      
 
-    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <div id="restaurant-div" class="result-list">
+    </div>
+    <div id="pos-div" class="result-list">
+    </div>
+    <div id="event-div" class="result-list">
+    </div>
+    <div class="bg" id="bg1"></div>
+    <div class="bg" id="bg2"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBJv0EWJ2s5KgkJX3ExXT6V9NFkXKEZ2Mo&libraries=places"></script>
     <script src="main.js"></script>
 </body>

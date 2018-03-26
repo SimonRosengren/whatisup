@@ -60,6 +60,11 @@ html {
     cursor: pointer;
   }
 
+  #temperature{
+    padding-left: 145px;
+    padding-top: 130px;
+  }
+
   .result-list{
     font-family: 'Allerta Stencil', sans-serif;
     display: inline-flex;
@@ -99,6 +104,11 @@ html {
     display: inline-block;
     -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
     animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  }
+
+  #temp-div{
+    height: 400px;
+    text-align: center;
   }
   
   .spinner .bounce1 {

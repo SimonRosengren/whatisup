@@ -14,7 +14,7 @@ function init() {
 
 function setLoadingIcons() {
     $("#restaurant-div").append('<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>');
-    $("#pos-div").append('<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>');
+    $("#temp-div").append('<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>');
     $("#event-div").append('<div class="spinner"><div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div></div>');
 }
 
@@ -23,10 +23,10 @@ $("#search-form").submit(function (event) {
     var search = $(this).serialize();
     search = search.split('=');
     search = search[1];
-    console.log(search)
     getLatLngFromText(search);
     getBgPictures(search);
     getInfoFromSongkick(search);
+    getWeatherInfo(search);
     event.preventDefault();
 })
 
@@ -114,7 +114,6 @@ function setRedirectUrl(result, status) {
     }
     var name = result.name;
     if (status == google.maps.places.PlacesServiceStatus.OK) {
-        console.log(result)
         $("#restaurant-ul").append('<li class="' + result.place_id + '">' + name.toUpperCase() + ' : ' + openStatus + '</li>');
         $("." + result.place_id).click(function () {
             window.open(result.website)
@@ -126,8 +125,6 @@ function setRedirectUrl(result, status) {
 var bgPic = [];
 
 function getBgPictures(city) {
-
-    console.log(city)
     bgPic = [];
     $.ajax({
         url: " https://api.flickr.com/services/rest/?method=flickr.photos.search&privacy_filter=1&api_key=dc55321147eb831fb3d20caeb2367882&text=" + city + "&sort=relevance&format=json&nojsoncallback=1",
@@ -154,7 +151,6 @@ function startLoop() {
     counter++;
     src2.style.backgroundImage = "url(" + bgPic[counter] + ")"
     myInterval = setInterval(LoopPictures, iFrequency);  // run
-    console.log("A interval has been created!")
 }
 
 var bg2Out = true;
@@ -181,7 +177,6 @@ function LoopPictures() {
 function getInfoFromSongkick(place) {
     var url = "http://api.songkick.com/api/3.0/search/locations.json?query=" + place + "&apikey=" + songkickApiKey;
     $.get(url, function (data, status) {
-        console.log(status)
         if (status == 'success') {
             sendRequestToSongkickWithId(data.resultsPage.results.location[0].metroArea.id);
         }
@@ -194,7 +189,6 @@ function getInfoFromSongkick(place) {
 function sendRequestToSongkickWithId(id) {
     var url = "http://api.songkick.com/api/3.0/metro_areas/" + id + "/calendar.json?apikey=" + songkickApiKey;
     $.get(url, function (data, status) {
-        console.log(status)
         if (status == 'success') {
             console.log(data)
             fillEventList(data);
@@ -210,8 +204,20 @@ function fillEventList(data) {
     $("#event-div").append('<ul id="event-ul"></ul>')
     for (let i = 0; i < 15; i++) {
         $("#event-ul").append('<li id="' + data.resultsPage.results.event[i].id + '">' + data.resultsPage.results.event[i].displayName + '</li>')
-        $("#" + data.resultsPage.results.event[i].id).click(function(){
+        $("#" + data.resultsPage.results.event[i].id).click(function () {
             window.open(data.resultsPage.results.event[i].uri)
         })
     }
+}
+
+
+function getWeatherInfo(place) {
+    var url = "https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%20in%20(select%20woeid%20from%20geo.places(1)%20where%20text%3D%22" + place + "%22)&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys";
+    $.get(url, function (data, status) {
+        var tempInF = data.query.results.channel.item.condition.temp;
+        var tempInC = ((tempInF - 32) * 5) / 9
+        $("#temp-div").empty();
+        $("#temp-div").append('<h1 id="temperature">' + Math.ceil(tempInC) + '°  <i class="wi wi-night-sleet"></i></h1>' )
+        console.log(Math.ceil(tempInC))
+    })
 }

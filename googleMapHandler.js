@@ -7,11 +7,15 @@ whatisup.googleMapApi = {
     },
 
     updateInformation: function(searchValue) {
+        whatisup.songkickApi.getInfoFromSongKick(searchValue);
+        whatisup.backgroundApi.startLoop(searchValue);
+        whatisup.weatherApi.getWeatherInfo(searchValue);
         whatisup.googleMapApi.getGoogleInfoFromText(searchValue);
     },
 
     getGoogleInfoFromText: function(text) {
-        geocoder.geocode({ 'address': text }, function (results, status) {
+        var parsedText = text.replace(/%20/g, " ");
+        geocoder.geocode({ 'address': parsedText }, function (results, status) {
             if (status == 'OK') {
                 whatisup.googleMapApi.getInformationFromPosition({ coords: { latitude: results[0].geometry.location.lat(), longitude: results[0].geometry.location.lng() } })
             }
@@ -41,6 +45,7 @@ whatisup.googleMapApi = {
             }
         })
     },
+    
 
     getInformationFromPosition: function (position) {
         //Picture, songkick and weather info
@@ -67,17 +72,13 @@ whatisup.googleMapApi = {
         service.nearbySearch(request, restaurantCallback);
     }, 
 
- 
-
     getDetailedInfoFromId: function(id) {
         var request = {
             placeId: id
         };
         service = new google.maps.places.PlacesService(map);
         service.getDetails(request, setRedirectUrl);
-    },
-    
-
+    }
 }
 var restaurantCallback = function(results, status) {
     if (status == google.maps.places.PlacesServiceStatus.OK) {

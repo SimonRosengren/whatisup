@@ -17,7 +17,7 @@ $("#search-form").submit(function (event) {
     var search = $(this).serialize();
     search = search.split('=');
     search = search[1];
-
+    console.log(search)
     whatisup.googleMapApi.updateInformation(search)
 
 })

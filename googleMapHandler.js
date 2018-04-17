@@ -8,7 +8,7 @@ whatisup.googleMapApi = {
 
     updateInformation: function(searchValue) {
         whatisup.songkickApi.getInfoFromSongKick(searchValue);
-        whatisup.backgroundApi.startLoop(searchValue);
+        //whatisup.backgroundApi.startLoop(searchValue);
         whatisup.weatherApi.getWeatherInfo(searchValue);
         whatisup.googleMapApi.getGoogleInfoFromText(searchValue);
     },

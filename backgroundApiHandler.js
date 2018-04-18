@@ -8,7 +8,7 @@ var myInterval = 0;
 
 whatisup.backgroundApi = {
     startLoop: function(city) {
-        var deparsedCity = city.replace(" ", "%20")
+        var deparsedCity = city.replace(/ /g, "%20")
         deparsedCity = deparsedCity.replace("ö", "o")
         console.log(deparsedCity)
         clearInterval(myInterval);

@@ -57,6 +57,7 @@ html {
     color: white;
     margin-bottom: 8px;
     border-bottom: 1px solid white;
+    max-width: 65%;
   }
 
   input:focus{

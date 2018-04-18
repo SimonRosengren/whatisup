@@ -9,6 +9,7 @@ var myInterval = 0;
 whatisup.backgroundApi = {
     startLoop: function(city) {
         var deparsedCity = city.replace(" ", "%20")
+        deparsedCity = deparsedCity.replace("ö", "o")
         console.log(deparsedCity)
         clearInterval(myInterval);
         src1.style.backgroundImage = "url(" +"https://source.unsplash.com/2048x1152/?" + deparsedCity + "&foo=" + 0 + ")"

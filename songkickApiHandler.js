@@ -1,6 +1,6 @@
 whatisup.songkickApi = {
     getInfoFromSongKick: function(place) {
-        var url = "http://api.songkick.com/api/3.0/search/locations.json?query=" + place + "&apikey=" + songkickApiKey;
+        var url = "https://api.songkick.com/api/3.0/search/locations.json?query=" + place + "&apikey=" + songkickApiKey;
         $.get(url, function (data, status) {
             if (status == 'success') {
                 whatisup.songkickApi.sendRequestToSongkickWithId(data.resultsPage.results.location[0].metroArea.id);
@@ -12,7 +12,7 @@ whatisup.songkickApi = {
     }, 
 
     sendRequestToSongkickWithId: function(id) {
-        var url = "http://api.songkick.com/api/3.0/metro_areas/" + id + "/calendar.json?apikey=" + songkickApiKey;
+        var url = "https://api.songkick.com/api/3.0/metro_areas/" + id + "/calendar.json?apikey=" + songkickApiKey;
         $.get(url, function (data, status) {
             if (status == 'success') {
                 whatisup.songkickApi.fillEventList(data);
